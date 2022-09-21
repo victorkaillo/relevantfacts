@@ -1,0 +1,5 @@
+build:
+  docker:
+    selenium-python: Dockerfile
+run:
+  selenium-python: python app.py
