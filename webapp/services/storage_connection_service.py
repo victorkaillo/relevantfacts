@@ -21,7 +21,7 @@ except Exception as err:
 
 def upload_file(file_system="compartilhamento", file_name='relevant_facts.json', directory='relevantfacts'):
     # try:
-    "https://kaillodatalake.blob.core.windows.net/relevantfacts?si=relevantfacts&sv=2021-06-08&sr=c&sig=Mil39rExAP9vRF2edwlB2qjhVqxyjlBNIpqkD6%2FlY0U%3D"
+    # "https://kaillodatalake.blob.core.windows.net/relevantfacts?si=relevantfacts&sv=2021-06-08&sr=c&sig=Mil39rExAP9vRF2edwlB2qjhVqxyjlBNIpqkD6%2FlY0U%3D"
         file_system_client = service_client.get_file_system_client(file_system=str(file_system))
         if directory != None:
             print("create_file")

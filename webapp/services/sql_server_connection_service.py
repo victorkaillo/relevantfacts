@@ -6,20 +6,22 @@ import traceback
 import json
 
 from webapp.repositories.relevant_facts_repository import getByFilter, getAll
-from kinvolog import LogService
 from environs import Env
 env = Env()
 env.read_env()
 
 def getAllRelevantFactsjson():
-    sql = getAll()
-    relevantFactsByFilter = execute(sql)
+    # sql = getAll()
+    # relevantFactsByFilter = execute(sql)
+    relevantFactsByFilter = pd.read_json('relevant_facts.json', orient="index")
     result = json.loads(relevantFactsByFilter.to_json(orient="index"))
     return result
 
 def getByFilterjson(startDate, endDate):
-    sql = getByFilter(startDate, endDate)
-    relevantFactsByFilter = execute(sql)
+    # sql = getByFilter(startDate, endDate)
+    # relevantFactsByFilter = execute(sql)
+    relevantFactsByFilter = pd.read_json('relevant_facts.json', orient="index")
+    relevantFactsByFilter.loc[relevantFactsByFilter["CreationDate"].str.startswith(f'{startDate}')==True]
     result = json.loads(relevantFactsByFilter.to_json(orient="index"))
     return result
 
@@ -35,15 +37,11 @@ def execute(sql):
         # print(con)
         df = pd.read_sql(sql, connection)
         
-        LogService.sendLog(success=True, job=f"Executar SQL: {sql}", source="kinvo.crawler.ri",
-            textMessage="Success in read_sql to dataframe", level="INFO", environment="PRODUCTION", details=traceback.format_exc())
-
         connection.close()
         
         return df
     except Exception as e:
-        LogService.sendLog(success=False, job=f"Executar SQL: {sql}", source="kinvo.crawler.ri",
-        textMessage=str(e), level="CRITICAL", environment="PRODUCTION", details=traceback.format_exc())
+       pass
 
 def executeDeleteAno(tablename='[RelevantFacts]',anoAnterior=0):
     try:
@@ -52,8 +50,7 @@ def executeDeleteAno(tablename='[RelevantFacts]',anoAnterior=0):
         con.execute(f"DELETE FROM {tablename} WHERE (DATEPART(yy, PubDate) = {anoAnterior})")
         con.close()
     except Exception as e:
-        LogService.sendLog(success=False, job=f"Deletar da tabela SQL: {tablename}", source="kinvo.crawler.ri",
-        textMessage=str(e), level="CRITICAL", environment="PRODUCTION", details=traceback.format_exc())
+        pass
 
 def executeDeleteWeek():
     weekDay = int(datetime.now().isoweekday()) - 1
@@ -77,8 +74,7 @@ def executeDeleteHoje(tablename='[RelevantFacts]'):
         )
         con.close()
     except Exception as e:
-        LogService.sendLog(success=False, job=f"Deletar da tabela SQL: {tablename}", source="kinvo.crawler.ri",
-        textMessage=str(e), level="CRITICAL", environment="PRODUCTION", details=traceback.format_exc())
+        pass
 
 def executeDeleteHojeAnoAnterior(tablename='[RelevantFacts]'):
     try:
@@ -92,9 +88,8 @@ def executeDeleteHojeAnoAnterior(tablename='[RelevantFacts]'):
         )
         con.close()
     except Exception as e:
-        LogService.sendLog(success=False, job=f"Deletar da tabela SQL: {tablename}", source="kinvo.crawler.ri",
-        textMessage=str(e), level="CRITICAL", environment="PRODUCTION", details=traceback.format_exc())
-
+        pass
+    
 def executeDeleteRepeated():
     # try:
         sql_query = "WITH cte AS (SELECT Company, Sector,Type,Link, ROW_NUMBER() OVER (PARTITION BY Company, Link ORDER BY Company, Link) row_num FROM [RelevantFacts]) DELETE FROM cte WHERE row_num > 1;"
@@ -102,9 +97,7 @@ def executeDeleteRepeated():
         con.execute(sql_query)
         con.close()
     # except Exception as e:
-    #     LogService.sendLog(success=False, job=f"Deletar da tabela SQL", source="kinvo.crawler.ri",
-    #     textMessage=str(e), level="CRITICAL", environment="PRODUCTION", details=traceback.format_exc())
-   
+    #     pass
 #    
 
 def executeInsert(sql, values):
@@ -115,8 +108,7 @@ def executeInsert(sql, values):
 
         con.close()
     except Exception as e:
-        LogService.sendLog(success=False, job=f"Executar insert {sql} com os valores {values}", source="kinvo.crawler.ri",
-        textMessage=str(e), level="CRITICAL", environment="PRODUCTION", details=traceback.format_exc())
+        pass
 
 def getInstance(envProd=False):
     try:
@@ -133,5 +125,3 @@ def getInstance(envProd=False):
         return connection
     except Exception as e:
         print(e)
-        LogService.sendLog(success=False, job="Instanciar banco de dados", source="kinvo.crawler.ri",
-        textMessage=str(e), level="CRITICAL", environment="PRODUCTION", details=traceback.format_exc())

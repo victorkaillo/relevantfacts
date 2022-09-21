@@ -32,7 +32,7 @@ def tableRelevantFactsWeek():
         # datetime.day(5)
 
         driver = getDriver()
-        # connection = getInstance(True)
+        connection = getInstance(True)
         urlLogin = "https://estadaori.estadao.com.br/?s=&setor_de_atividade=&datas=dia&post_type=fatos_relevantes"
         relevantFacts = crawlerByPage(driver,connection,5,True)
         
