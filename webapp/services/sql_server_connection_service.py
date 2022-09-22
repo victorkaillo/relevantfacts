@@ -5,7 +5,7 @@ from datetime import datetime
 import traceback
 import json
 
-from webapp.repositories.relevant_facts_repository import getByFilter, getAll
+# from webapp.repositories.relevant_facts_repository import getByFilter, getAll
 from environs import Env
 env = Env()
 env.read_env()

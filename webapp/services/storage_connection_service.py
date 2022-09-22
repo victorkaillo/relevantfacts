@@ -44,7 +44,7 @@ def upload_file(file_system="compartilhamento", file_name='relevant_facts.json',
     #     pass
 
 
-def downloadFile(file_system, file_name, directory=None):
+def download_file(file_system, file_name, directory=None):
     try:
         file_system_client = service_client.get_file_system_client(file_system=str(file_system))
         if directory != None:
@@ -68,7 +68,7 @@ def updateFile(newData, columnID, columnDate, directory, fileNameStr):
     try:
         newDf = pd.DataFrame(newData)
         try:
-            donwloadStorage = json.loads(downloadFile(file_system='financial', directory=directory, file_name=fileNameStr))
+            donwloadStorage = json.loads(download_file(file_system='financial', directory=directory, file_name=fileNameStr))
             oldDf = pd.DataFrame(donwloadStorage)
             
             df = pd.concat([oldDf,newDf], ignore_index=True, sort=False)\

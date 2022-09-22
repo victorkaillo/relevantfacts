@@ -55,19 +55,27 @@ def tableRelevantFactsToday():
         driver = getDriver()
         urlLogin = "https://estadaori.estadao.com.br/?s=&setor_de_atividade=&datas=dia&post_type=fatos_relevantes"
         relevantFacts = crawlerByUrl(driver,urlLogin)
+        print("crawler sucess")
+        relevantFactsByFilter = pd.read_json('relevant_facts.json', orient="index")
+        print("load file sucess")
+        df =  pd.concat([relevantFacts,relevantFactsByFilter]).drop_duplicates().reset_index(drop=True)
+        print("concat sucess")
+
+
         
-        connection = getInstance(True)
-        relevantFacts.to_sql('RelevantFacts', con=connection, if_exists='append', index=False)
-        connection.close()
+        # connection = getInstance(True)
+        # relevantFacts.to_sql('RelevantFacts', con=connection, if_exists='append', index=False)
+        # connection.close()
         
         # relevantFacts.to_csv('relevant_facts.csv')
         
         driver.quit()
         del driver
 
-        return relevantFacts
+        return df
     except Exception as err:
         pass
+
 def tableRelevantFacts(pageNumber=110):
     try:
         # LogService.sendLog(success=True, job="tableRelevantFacts", source="kinvo.crawler.ri",

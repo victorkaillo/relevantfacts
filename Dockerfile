@@ -52,11 +52,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install h11
 
 
-ENV PORT=5018
+ENV PORT=80
 EXPOSE $PORT
 
 
 # Set display port as an environment variable
-ENV DISPLAY=:99
+# ENV DISPLAY=:99
 CMD ["python", "run.py"]
 # CMD gunicorn --log-file=- main:app --bind 0.0.0.0:$PORT --timeout 2200 -w 4 -k uvicorn.workers.UvicornWorker
